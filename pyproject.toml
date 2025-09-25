@@ -5,7 +5,9 @@ requires = [
 ]
 
 [project]
-dependencies = []
+dependencies = [
+    "earthkit-plots",
+]
 description = "DCCMS styles for use with earthkit-plots"
 dynamic = ["version"]
 license = {text = "Apache License Version 2.0"}
