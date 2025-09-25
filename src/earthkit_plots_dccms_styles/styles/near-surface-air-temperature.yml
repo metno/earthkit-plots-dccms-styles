@@ -1,10 +1,9 @@
 ---
-id: dew-point-temperature
-optimal: DEW_POINT_TEMPERATURE_IN_CELSIUS
+id: near-surface-air-temperature
+optimal: NEAR_SURFACE_AIR_TEMPERATURE_IN_CELSIUS
 
 styles:
-
-  DEW_POINT_TEMPERATURE_IN_CELSIUS:
+  NEAR_SURFACE_AIR_TEMPERATURE_IN_CELSIUS:
     type: Style
     colors:
         - [0.2902, 0.1137, 0.5608]
