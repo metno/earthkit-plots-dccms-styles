@@ -1,0 +1,7 @@
+---
+id: vertical-velocity-at-100m
+
+criteria:
+- {paramId: 135, shortName: w}
+- {standard_name: vertical_velocity}
+- {long_name: Vertical Velocity}

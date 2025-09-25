@@ -1,0 +1,10 @@
+id: cloud-cover
+
+criteria:
+- {paramId: 260648, shortName: fog}
+- {standard_name: fog_cloud_cover}
+- {paramId: 185, shortName: ccc}
+- {paramId: 186, shortName: lcc}
+- {paramId: 187, shortName: mcc}
+- {paramId: 188, shortName: hcc}
+- {paramId: 164, shortName: tcc}

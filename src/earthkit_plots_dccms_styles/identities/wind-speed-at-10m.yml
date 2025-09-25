@@ -1,0 +1,5 @@
+id: wind-speed-at-10m
+
+criteria:
+- {paramId: 10, shortName: ws}
+- {long_name: Wind speed}

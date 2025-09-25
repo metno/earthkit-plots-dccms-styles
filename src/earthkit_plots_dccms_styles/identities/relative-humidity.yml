@@ -1,0 +1,6 @@
+id: relative-humidity
+
+criteria:
+- {paramId: 157, shortName: r}
+- {standard_name: relative_humidity}
+- {long_name: Relative humidity}

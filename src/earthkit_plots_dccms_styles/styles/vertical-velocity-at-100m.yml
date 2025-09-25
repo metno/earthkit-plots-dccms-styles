@@ -1,0 +1,13 @@
+---
+id: vertical-velocity-at-100m
+optimal: VERTICAL_VELOCITY_AT_100M_IN_KMH
+
+styles:
+
+  VERTICAL_VELOCITY_AT_100M_IN_KMH:
+    type: Style
+    colors: RdBu
+    extend: both
+    levels: [-20,-10,-5,-4,-3,-2,-1,0,0..5,1.25,2.0,3.0,4.0,5,10,15]
+    ticks: [-20,-5,-3,-1,0.5,2,4,10]
+    units: km h-1

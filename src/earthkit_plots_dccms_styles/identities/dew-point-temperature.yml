@@ -1,0 +1,6 @@
+id: dew-point-temperature
+
+criteria:
+- {paramId: 3017, shortName: dpt}
+- {standard_name: dew_point_temperature}
+- {long_name: Dew point temperature}
