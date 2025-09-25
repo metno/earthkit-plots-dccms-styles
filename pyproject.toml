@@ -1,0 +1,32 @@
+[build-system]
+requires = [
+  "setuptools>=61",
+  "setuptools-scm>=8"
+]
+
+[project]
+dependencies = []
+description = "DCCMS styles for use with earthkit-plots"
+dynamic = ["version"]
+license = {text = "Apache License Version 2.0"}
+name = "earthkit-plots-dccms-styles"
+readme = "README.md"
+requires-python = ">= 3.8"
+urls.Issues = "https://github.com/metno/earthkit-plots-dccms-styles.issues"
+urls.Repository = "https://github.com/metno/earthkit-plots-dccms-styles/"
+
+[tool.isort]
+profile = "black"
+
+[tool.pydocstyle]
+add_ignore = ["D1", "D200", "D205", "D400", "D401"]
+convention = "numpy"
+
+[project.entry-points.'earthkit.plots.plugins']
+dccms = 'earthkit_plots_dccms_styles'
+
+[tool.setuptools.packages.find]
+where = ["src/"]
+
+[tool.setuptools_scm]
+version_file = "src/earthkit_plots_dccms_styles/_version.py"
