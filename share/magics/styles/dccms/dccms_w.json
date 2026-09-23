@@ -1,0 +1,20 @@
+[
+  {
+    "eccharts_layer": "dccms_vertical_velocity",
+    "match": [
+      {
+        "paramId": "135",
+        "shortName": "w"
+      },
+      {
+        "standard_name": "vertical_velocity"
+      },
+      {
+        "long_name": "Vertical Velocity"
+      }
+    ],
+    "styles": [
+      "dccms_sh_w_fM20t15lst"
+    ]
+  }
+]

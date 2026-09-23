@@ -88,3 +88,34 @@ The examples folder contains sample visualisations demonstrating the DCCMS styli
 | `tp-Africa.png`   | Precipitation map across Africa            | ![Precipitation map across Africa](examples/tp-Africa.png) |
 | `tcc-Malawi.png`  | Cloud cover analysis                       | ![Cloud cover analysis](examples/tcc-Malawi.png) |
 | `r-Africa.png`    | Relative humidity patterns                 | ![Relative humidity patterns](examples/r-Africa.png) |
+
+## Magics
+
+The same styles are also available in the
+[Magics](https://github.com/ecmwf/magics) style-library format. Installing this
+package deploys a complete Magics style library — the stock ECMWF one with the
+DCCMS styles merged in — to `<sys.prefix>/share/magics/styles/dccms`. Point
+`MAGICS_STYLE_PATH` at it and Magics will pick the DCCMS style for a field from
+its metadata:
+
+```bash
+export MAGICS_STYLE_PATH="$(python -c 'import sys; print(sys.prefix)')/share/magics/styles/dccms"
+```
+
+```python
+from Magics import macro as magics
+
+magics.plot(
+    magics.output(output_formats=["png"], output_name="2t"),
+    magics.mmap(subpage_map_projection="cylindrical"),
+    magics.mgrib(grib_input_file_name="2t.grib"),
+    magics.mcont(contour_automatic_setting="ecmwf"),
+    magics.mlegend(),
+    magics.mcoast(),
+)
+```
+
+See [`magics/README.md`](magics/README.md) for the full contents, how to
+install the DCCMS map decoration as a Magics theme, and the handful of places
+where the two formats do not line up. The DCCMS pieces are generated from the
+YAML styles by `python tools/earthkit_to_magics.py`.

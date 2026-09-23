@@ -1,0 +1,50 @@
+{
+  "background": {
+    "contour_legend_text": "DCCMS land/sea background",
+    "map_coastline": "on",
+    "map_coastline_colour": "rgb(0.3333,0.3333,0.3333)",
+    "map_coastline_land_shade": "on",
+    "map_coastline_land_shade_colour": "rgb(0.9098,0.9098,0.9098)",
+    "map_coastline_sea_shade": "on",
+    "map_coastline_sea_shade_colour": "rgb(0.9765,0.9765,0.9765)",
+    "map_coastline_thickness": 1,
+    "map_grid": "off",
+    "map_label": "off"
+  },
+  "boundaries": {
+    "contour_legend_text": "DCCMS boundaries",
+    "map_administrative_boundaries": "off",
+    "map_administrative_boundaries_colour": "rgb(0.6,0.6,0.6)",
+    "map_administrative_boundaries_style": "solid",
+    "map_boundaries": "on",
+    "map_boundaries_colour": "rgb(0.6,0.6,0.6)",
+    "map_boundaries_thickness": 1,
+    "map_coastline": "off",
+    "map_disputed_boundaries": "on",
+    "map_disputed_boundaries_colour": "rgb(0.75,0.2,0.2)",
+    "map_disputed_boundaries_style": "dash",
+    "map_grid": "off",
+    "map_label": "off"
+  },
+  "foreground": {
+    "contour_legend_text": "DCCMS coastlines",
+    "map_coastline": "on",
+    "map_coastline_colour": "rgb(0.3333,0.3333,0.3333)",
+    "map_coastline_land_shade": "off",
+    "map_coastline_sea_shade": "off",
+    "map_coastline_thickness": 1,
+    "map_grid": "off",
+    "map_label": "off"
+  },
+  "grid": {
+    "contour_legend_text": "DCCMS grid",
+    "map_coastline": "off",
+    "map_grid": "on",
+    "map_grid_colour": "rgb(0.7333,0.7333,0.7333)",
+    "map_grid_line_style": "solid",
+    "map_grid_thickness": 1,
+    "map_label": "on",
+    "map_label_colour": "rgb(0.4667,0.4667,0.4667)",
+    "map_label_height": 0.35
+  }
+}

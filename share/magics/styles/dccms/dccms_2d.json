@@ -1,0 +1,21 @@
+[
+  {
+    "eccharts_layer": "dccms_2t_dewpoint",
+    "match": [
+      {
+        "paramId": "3017",
+        "shortName": "dpt"
+      },
+      {
+        "standard_name": "dew_point_temperature"
+      },
+      {
+        "long_name": "Dew point temperature"
+      }
+    ],
+    "prefered_units": "C",
+    "styles": [
+      "dccms_sh_2d_fM12t46i2"
+    ]
+  }
+]

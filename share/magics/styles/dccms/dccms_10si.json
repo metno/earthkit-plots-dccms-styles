@@ -1,0 +1,18 @@
+[
+  {
+    "eccharts_layer": "dccms_wind_speed",
+    "match": [
+      {
+        "paramId": "10",
+        "shortName": "ws"
+      },
+      {
+        "long_name": "Wind speed"
+      }
+    ],
+    "styles": [
+      "dccms_sh_10si_f0t31lst",
+      "dccms_sh_10si_f0t110lst"
+    ]
+  }
+]

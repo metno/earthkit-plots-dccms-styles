@@ -1,0 +1,37 @@
+[
+  {
+    "eccharts_layer": "dccms_cloud_cover",
+    "match": [
+      {
+        "paramId": "260648",
+        "shortName": "fog"
+      },
+      {
+        "standard_name": "fog_cloud_cover"
+      },
+      {
+        "paramId": "185",
+        "shortName": "ccc"
+      },
+      {
+        "paramId": "186",
+        "shortName": "lcc"
+      },
+      {
+        "paramId": "187",
+        "shortName": "mcc"
+      },
+      {
+        "paramId": "188",
+        "shortName": "hcc"
+      },
+      {
+        "paramId": "164",
+        "shortName": "tcc"
+      }
+    ],
+    "styles": [
+      "dccms_sh_cloud_f0t1i01"
+    ]
+  }
+]

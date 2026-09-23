@@ -1,0 +1,24 @@
+[
+  {
+    "eccharts_layer": "dccms_tp",
+    "match": [
+      {
+        "standard_name": "total_precipitation"
+      },
+      {
+        "long_name": "Total precipitation"
+      },
+      {
+        "paramId": "228",
+        "shortName": "tp"
+      },
+      {
+        "paramId": "228"
+      }
+    ],
+    "prefered_units": "mm",
+    "styles": [
+      "dccms_sh_tp_f0t200lst"
+    ]
+  }
+]
