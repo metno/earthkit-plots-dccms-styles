@@ -1,9 +1,8 @@
 [build-system]
 requires = [
-  "hatchling",
-  "hatch-vcs"
+  "setuptools>=61",
+  "setuptools-scm>=8"
 ]
-build-backend = "hatchling.build"
 
 [project]
 dependencies = [
@@ -28,33 +27,18 @@ convention = "numpy"
 [project.entry-points.'earthkit.plots.plugins']
 dccms = 'earthkit_plots_dccms_styles'
 
-# Version comes from git tags, as it did under setuptools-scm; hatch-vcs wraps
-# the same machinery and writes the same _version.py.
-[tool.hatch.version]
-source = "vcs"
+[tool.setuptools.packages.find]
+where = ["src/"]
 
-[tool.hatch.build.hooks.vcs]
-version-file = "src/earthkit_plots_dccms_styles/_version.py"
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/earthkit_plots_dccms_styles"]
-
-# The Magics style library is installed into the environment's data prefix, so
-# it lands at <sys.prefix>/share/magics/styles/dccms -- the same layout Magics
-# uses for its own libraries. Magics does not pick it up implicitly: it reads
-# only its own bundled share directory unless MAGICS_STYLE_PATH says otherwise.
+# The Magics style library under share/ is installed into the environment's
+# data prefix, so it lands at <sys.prefix>/share/magics/styles/dccms -- the
+# same layout Magics uses for its own libraries. Point MAGICS_STYLE_PATH at
+# that directory; Magics never picks it up implicitly, it reads only its own
+# bundled share directory unless that variable says otherwise.
 #
-# This needs a build backend that can write to the wheel's data scheme.
-# setuptools dropped `data_files` from its pyproject schema (it survives only
-# via a setup.py shim), so the project builds with hatchling.
-[tool.hatch.build.targets.wheel.shared-data]
-"share/magics/styles/dccms" = "share/magics/styles/dccms"
-"share/magics/dccms_units-rules.json" = "share/magics/dccms_units-rules.json"
+# This is declared in setup.py rather than here: setuptools has dropped
+# data_files from its pyproject schema, and it remains available only through
+# a setup() call.
 
-[tool.hatch.build.targets.sdist]
-include = [
-  "src",
-  "share",
-  "tools",
-  "README.md",
-]
+[tool.setuptools_scm]
+version_file = "src/earthkit_plots_dccms_styles/_version.py"
