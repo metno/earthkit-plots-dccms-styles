@@ -49,12 +49,12 @@ packages = ["src/earthkit_plots_dccms_styles"]
 # via a setup.py shim), so the project builds with hatchling.
 [tool.hatch.build.targets.wheel.shared-data]
 "share/magics/styles/dccms" = "share/magics/styles/dccms"
+"share/magics/dccms_units-rules.json" = "share/magics/dccms_units-rules.json"
 
 [tool.hatch.build.targets.sdist]
 include = [
   "src",
   "share",
   "tools",
-  "magics",
   "README.md",
 ]

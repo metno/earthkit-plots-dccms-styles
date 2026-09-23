@@ -115,7 +115,9 @@ magics.plot(
 )
 ```
 
-See [`magics/README.md`](magics/README.md) for the full contents, how to
+See [`share/magics/styles/dccms/README.md`](share/magics/styles/dccms/README.md) for the full contents, how to
 install the DCCMS map decoration as a Magics theme, and the handful of places
 where the two formats do not line up. The DCCMS pieces are generated from the
-YAML styles by `python tools/earthkit_to_magics.py`.
+YAML styles by `python tools/earthkit_to_magics.py`, which merges them into the
+vendored copy of the stock ECMWF library in
+[`share/magics/styles/dccms`](share/magics/styles/dccms).
