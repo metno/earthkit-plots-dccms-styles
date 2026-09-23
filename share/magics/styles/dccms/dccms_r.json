@@ -1,0 +1,20 @@
+[
+  {
+    "eccharts_layer": "dccms_r",
+    "match": [
+      {
+        "paramId": "157",
+        "shortName": "r"
+      },
+      {
+        "standard_name": "relative_humidity"
+      },
+      {
+        "long_name": "Relative humidity"
+      }
+    ],
+    "styles": [
+      "dccms_sh_r_f0t100i5"
+    ]
+  }
+]

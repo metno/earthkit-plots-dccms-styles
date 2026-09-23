@@ -30,5 +30,15 @@ dccms = 'earthkit_plots_dccms_styles'
 [tool.setuptools.packages.find]
 where = ["src/"]
 
+# The Magics style library under share/ is installed into the environment's
+# data prefix, so it lands at <sys.prefix>/share/magics/styles/dccms -- the
+# same layout Magics uses for its own libraries. Point MAGICS_STYLE_PATH at
+# that directory; Magics never picks it up implicitly, it reads only its own
+# bundled share directory unless that variable says otherwise.
+#
+# This is declared in setup.py rather than here: setuptools has dropped
+# data_files from its pyproject schema, and it remains available only through
+# a setup() call.
+
 [tool.setuptools_scm]
 version_file = "src/earthkit_plots_dccms_styles/_version.py"
