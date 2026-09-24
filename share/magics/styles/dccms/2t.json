@@ -3,6 +3,7 @@
     "eccharts_layer": "2t",
     "prefered_units": "C",
     "styles": [
+      "dccms_sh_2t_fM4t50i2",
       "sh_all_fM48t56i4",
       "sh_all_fM64t52i4",
       "ct_red_i2_dash",
@@ -31,19 +32,19 @@
       {
         "paramId": "167",
         "shortName": "2t",
-        "centre":"219"
+        "centre": "219"
       },
       {
         "paramId": "167",
-        "centre":"edzw"
+        "centre": "edzw"
       },
       {
         "paramId": "500015",
-        "centre":"edzw"
+        "centre": "edzw"
       },
       {
         "paramId": "500016",
-        "centre":"edzw"
+        "centre": "edzw"
       }
     ]
   }

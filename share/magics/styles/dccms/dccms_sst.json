@@ -22,7 +22,12 @@
     "prefered_units": "C",
     "styles": [
       "dccms_sh_sst_fM1t30i1",
-      "dccms_sh_sst_f272t300i1"
+      "dccms_sh_sst_f272t300i1",
+      "sh_sst_fM2t36i2",
+      "sh_sst_fM5t45",
+      "ct_sst_blk_fM2t36i2_i4",
+      "ct_sst_blue_fM2t36i2_i4",
+      "ct_sst_multicolour"
     ]
   }
 ]

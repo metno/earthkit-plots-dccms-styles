@@ -31,7 +31,19 @@
       }
     ],
     "styles": [
-      "dccms_sh_cloud_f0t1i01"
+      "dccms_sh_cloud_f0t1i01",
+      "transparency_white",
+      "sh_whi_f0t1lst",
+      "sh_blugry_f0t1lst",
+      "tran_whi_f03t1lst",
+      "transparency_grey",
+      "sh_gry_f0t1lst",
+      "sh_redgry_f0t1lst",
+      "tran_gry_f03t1lst",
+      "transparency_lightgrey",
+      "sh_lgtgry_f0t1lst",
+      "sh_grngry_f0t1lst",
+      "tran_lgtgry_f03t1lst"
     ]
   }
 ]

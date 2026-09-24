@@ -14,7 +14,12 @@
       }
     ],
     "styles": [
-      "dccms_sh_w_fM20t15lst"
+      "dccms_sh_w_fM20t15lst",
+      "sh_blured_fM5t5lst",
+      "sh_blu_fM5tM005lst",
+      "sh_red_f005t5lst",
+      "sh_viobrn_fM5t5lst",
+      "ct_blured_lst"
     ]
   }
 ]

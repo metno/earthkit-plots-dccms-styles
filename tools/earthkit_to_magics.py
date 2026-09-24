@@ -390,6 +390,116 @@ def build_param_file(identity, style_names):
     return magics_file, [record]
 
 
+# paramId is the only identifier precise enough to decide that two entries are
+# about the same field. shortName alone is not: the stock library uses "t" and
+# "ws" for pressure-level fields the DCCMS styles have nothing to do with.
+IDENTITY_KEY = "paramId"
+
+# A stock entry narrowed by any of these is about a more specific field than
+# the DCCMS styles cover -- a pressure level, or an ensemble product whose
+# values live on a different scale. The DCCMS criteria never mention them, so
+# an entry that does is not a competitor.
+NARROWING_KEYS = ("levelist", "level", "levtype", "type")
+
+
+def param_ids(match_entries):
+    """The paramIds these match entries claim."""
+    ids = set()
+    for entry in match_entries:
+        value = entry.get(IDENTITY_KEY)
+        if value is None:
+            continue
+        for item in value if isinstance(value, list) else [value]:
+            ids.add(str(item))
+    return ids
+
+
+def competes(record, ours):
+    """Can this stock record claim a field the DCCMS record `ours` also claims?"""
+    if not record.get("styles"):
+        return False  # a scaling-only entry, with no styles to offer
+    wanted = param_ids(ours["match"])
+    for entry in record.get("match", []):
+        if any(key in entry for key in NARROWING_KEYS):
+            continue
+        if param_ids([entry]) & wanted:
+            return True
+    return False
+
+
+def stock_styles(record):
+    """A stock record's own styles, with any injected DCCMS names removed.
+
+    Stripping the prefix is what makes the merge idempotent: it recovers the
+    upstream list no matter how many times this has run before.
+    """
+    return [s for s in record.get("styles", []) if not s.startswith(PREFIX)]
+
+
+def stock_param_files():
+    """Every non-DCCMS parameter file in the library, parsed."""
+    for path in sorted(OUT.glob("*.json")):
+        if path.name == "styles.json" or path.name.startswith(PREFIX):
+            continue
+        try:
+            records = json.loads(path.read_text())
+        except json.JSONDecodeError:
+            continue
+        if isinstance(records, list):
+            yield path, records
+
+
+def dump_stock(path, records):
+    """Rewrite a stock parameter file, keeping its key order and 2-space indent."""
+    with open(path, "w") as f:
+        json.dump(records, f, indent=2)
+        f.write("\n")
+
+
+def merge_style_lists(dccms_records):
+    """Give every entry that can match a DCCMS field the same list of styles.
+
+    Magics returns the style list of the single best-matching parameter entry
+    and never unions across files, so a stock entry that ties with ours hides
+    the DCCMS styles -- or ours hides the stock ones, depending on which way
+    the tie-break falls. Writing the same combined list into both sides makes
+    the answer the same either way, with the DCCMS style first so it stays the
+    default (Magics, and skinnyWMS, take styles[0] when none is requested).
+
+    Mutates the DCCMS records in place and rewrites the stock files it touches.
+    Returns the names of those files.
+    """
+    stock = list(stock_param_files())
+    additions = {}  # (path, record index) -> DCCMS style names to put in front
+
+    for record in dccms_records:
+        ours = list(record["styles"])
+        inherited = []
+        for path, records in stock:
+            for index, candidate in enumerate(records):
+                if not competes(candidate, record):
+                    continue
+                for name in stock_styles(candidate):
+                    if name not in inherited:
+                        inherited.append(name)
+                slot = additions.setdefault((path, index), [])
+                for name in ours:
+                    if name not in slot:
+                        slot.append(name)
+        record["styles"] = ours + [n for n in inherited if n not in ours]
+
+    by_path = {}
+    for (path, index), names in additions.items():
+        by_path.setdefault(path, {})[index] = names
+    for path, per_index in sorted(by_path.items()):
+        records = json.loads(path.read_text())
+        for index, names in per_index.items():
+            base = stock_styles(records[index])
+            records[index]["styles"] = names + [n for n in base if n not in names]
+        dump_stock(path, records)
+    return sorted(path.name for path in by_path)
+
+
 def build_coastlines():
     """Translate the DCCMS map decoration from schema.yml."""
     schema = load_yaml(SRC / "schema.yml")
@@ -518,11 +628,19 @@ def main():
     definitions, per_identity, warnings = build_styles()
     n_stock, n_ours = merge_styles_json(OUT / "styles.json", definitions)
 
-    written = []
+    built = {}
     for identity, style_names in per_identity.items():
         magics_file, record = build_param_file(identity, style_names)
-        dump(OUT / f"{magics_file}.json", record)
-        written.append(f"{magics_file}.json")
+        built[f"{magics_file}.json"] = record
+
+    # Fold the stock alternatives into our lists, and ours into theirs, so the
+    # same styles are advertised whichever entry Magics picks.
+    rewritten = merge_style_lists([r for record in built.values() for r in record])
+
+    written = []
+    for name, record in built.items():
+        dump(OUT / name, record)
+        written.append(name)
 
     dump(OUT / "coastlines.json", build_coastlines())
     dump(SHARE / "dccms_units-rules.json", EXTRA_UNITS_RULES)
@@ -535,9 +653,15 @@ def main():
         if f.name not in written and f.name != "dccms_units-rules.json"
     )
 
+    offered = {n: len(r[0]["styles"]) for n, r in built.items()}
     print(f"{OUT}")
     print(f"  styles.json: {n_stock} stock + {n_ours} DCCMS definitions")
     print(f"  {len(written)} parameter files, coastlines.json")
+    for name in sorted(offered):
+        print(f"    {name:26} advertises {offered[name]:>2} styles")
+    if rewritten:
+        print(f"  {len(rewritten)} stock files given the DCCMS styles too:")
+        print(f"    {', '.join(rewritten)}")
     print(f"{SHARE / 'dccms_units-rules.json'}")
     for warning in warnings:
         print(f"  note: {warning}")

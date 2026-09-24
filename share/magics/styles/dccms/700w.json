@@ -2,6 +2,7 @@
   {
     "eccharts_layer": "700w",
     "styles": [
+      "dccms_sh_w_fM20t15lst",
       "sh_blured_fM5t5lst",
       "sh_blu_fM5tM005lst",
       "sh_red_f005t5lst",
@@ -20,7 +21,7 @@
       {
         "paramId": "135",
         "shortName": "w",
-        "centre" : "219"
+        "centre": "219"
       }
     ]
   }

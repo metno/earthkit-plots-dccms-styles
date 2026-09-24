@@ -45,9 +45,9 @@ is named after the shortName it actually matches, which is why dew point is
 wind speed is `dccms_ws.json` (paramId 10) rather than `dccms_10si.json`
 (paramId 207).
 
-The prefix prevents *filename* collisions. It does not decide which library
-wins when both describe the same field — see **Merging with the stock
-library** below.
+The prefix prevents *filename* collisions. It does not decide which library's
+styles get advertised when both describe the same field — see **How the two
+libraries coexist** below.
 
 ## Using the styles
 
@@ -187,37 +187,52 @@ right length, that list is used verbatim. Where it names a matplotlib colormap
 velocity), the per-interval colours are read back out of the colormap
 earthkit-plots builds, so the two libraries draw the same thing.
 
-## Merging with the stock library
+## How the two libraries coexist
 
-`MAGICS_STYLE_PATH` selects **one** library; it is not a search path. Pointing
-it here replaces the stock ECMWF library outright, so any parameter not covered
-by the nine files above falls back to a style named `default` and Magics logs
-`Cannot find the preset default for`. A colon-separated list does not help —
-only the first entry is used.
+`MAGICS_STYLE_PATH` selects **one** library; it is not a search path, and a
+colon-separated list does not work — only the first entry is used. That is why
+this directory is a composite: the stock ECMWF library with the DCCMS entries
+merged in, rather than a DCCMS-only library that would leave every other
+parameter falling back to `default`.
 
-To serve DCCMS styles *alongside* the stock ones, build a composite library:
-copy `share/magics/styles/ecmwf/` and run `tools/earthkit_to_magics.py`
-against it. That is exactly how this directory was built. The `dccms_` prefix
-guarantees nothing is overwritten in the process.
+Merging the files is not enough on its own, because of how Magics resolves a
+style. It scores every parameter entry against the field's metadata, picks the
+**single** best-scoring entry, and returns that entry's `styles` array. It
+never unions across files. So for 2t, where both `2t.json` and `dccms_2t.json`
+match `{paramId: 167, shortName: 2t}` and both score 2, whichever wins the
+tie-break decides the whole answer — and the loser's styles are advertised
+nowhere, even though their definitions are loaded and still render by name.
 
-That is necessary but **not sufficient**. Magics scores each parameter entry by
-how many metadata keys it matches and takes the single best one, so where a
-stock file already claims the same field at the same score the winner is
-decided by a tie-break, not by intent. Measured on such a composite library:
+`tools/earthkit_to_magics.py` resolves this by giving both sides the same list:
+the DCCMS styles first, then the stock ones. The result no longer depends on
+the tie-break, and because Magics and skinnyWMS both take `styles[0]` when the
+client asks for no particular style, DCCMS stays the default. What each
+parameter ends up advertising:
 
-| Field | Winner |
-|-------|--------|
-| 2t, msl, sst | DCCMS |
-| tp, tcc | stock |
+| Field | Advertised | Default |
+|-------|-----------:|---------|
+| 2t | 13 | `dccms_sh_2t_fM4t50i2` |
+| msl | 15 | `dccms_ct_msl_i4` |
+| tp | 9 | `dccms_sh_tp_f0t200lst` |
+| sst | 7 | `dccms_sh_sst_fM1t30i1` |
+| w | 6 | `dccms_sh_w_fM20t15lst` |
+| tcc | 5 | `dccms_sh_cloud_f0t1i01` |
+| dpt, r, ws | 1–2 | the DCCMS style |
 
-A reliable merge therefore has to *remove* the stock parameter entries it
-supersedes (`tp_interval.json`, `tcc.json`, …), or give the DCCMS entries extra
-match keys so they outscore rather than tie. Three of the nine parameters never
-collide at all, because they match fields the stock library does not claim:
-`dccms_dpt.json` matches paramId 3017 / `dpt` where stock matches 168 / `2d`,
-`dccms_ws.json` matches paramId 10 / `ws` where stock matches 207 / `10si`,
-and `dccms_r.json` matches relative humidity on any level where stock requires
-`levtype: pl` or `ml`.
+The last three gain nothing because the stock library claims different
+identities for them: `dccms_dpt.json` matches paramId 3017 / `dpt` where stock
+matches 168 / `2d`, `dccms_ws.json` matches paramId 10 / `ws` where stock
+matches 207 / `10si`, and `dccms_r.json` matches relative humidity on any level
+where stock requires `levtype: pl` or `ml`.
+
+Eight stock files carry an injected DCCMS name as a result — `2t.json`,
+`msl.json`, `sst.json`, `tp_interval.json`, `700w.json`, `hcc.json`,
+`lcc.json` and `mcc.json`. Only their `styles` arrays are touched. A stock
+entry is treated as a competitor only when it shares a paramId with a DCCMS
+entry and is not narrowed by `levelist`, `level`, `levtype` or `type`, so
+pressure-level temperature styles and ensemble-spread products are left alone.
+Re-running the generator strips the injected names before recomputing, so the
+merge is idempotent.
 
 ## Issues found in the source styles
 
