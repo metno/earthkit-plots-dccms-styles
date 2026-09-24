@@ -64,6 +64,12 @@
       {
         "centre": "edzw",
         "paramId": "260074"
+      },
+      {
+        "standard_name": "air_pressure_at_sea_level"
+      },
+      {
+        "long_name": "Mean sea level pressure"
       }
     ]
   }

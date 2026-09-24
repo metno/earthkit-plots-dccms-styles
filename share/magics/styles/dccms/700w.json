@@ -22,6 +22,12 @@
         "paramId": "135",
         "shortName": "w",
         "centre": "219"
+      },
+      {
+        "standard_name": "vertical_velocity"
+      },
+      {
+        "long_name": "Vertical Velocity"
       }
     ]
   }

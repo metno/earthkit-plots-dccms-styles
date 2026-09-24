@@ -49,6 +49,17 @@
       {
         "paramId": "248",
         "shortName": "cc"
+      },
+      {
+        "paramId": "260648",
+        "shortName": "fog"
+      },
+      {
+        "standard_name": "fog_cloud_cover"
+      },
+      {
+        "paramId": "185",
+        "shortName": "ccc"
       }
     ]
   }

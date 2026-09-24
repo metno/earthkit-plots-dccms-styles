@@ -24,6 +24,15 @@
           "sea_surface_temperature",
           "sea_surface_skin_temperature"
         ]
+      },
+      {
+        "standard_name": "sea_surface_temperature"
+      },
+      {
+        "standard_name": "sea_surface_skin_temperature"
+      },
+      {
+        "long_name": "sea surface temperature"
       }
     ]
   }

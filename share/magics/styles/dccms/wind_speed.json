@@ -2,6 +2,8 @@
   {
     "eccharts_layer": "wind_speed",
     "styles": [
+      "dccms_sh_ws_f0t31lst",
+      "dccms_sh_ws_f0t110lst",
       "sh_red_f5t70lst",
       "sh_all_f03t70_beauf",
       "sh_all_f2t50i2",
@@ -21,7 +23,10 @@
         ]
       },
       {
-        "long_name": ["10 metre wind speed", "Daily-Mean Near-Surface Wind Speed"]
+        "long_name": [
+          "10 metre wind speed",
+          "Daily-Mean Near-Surface Wind Speed"
+        ]
       },
       {
         "long_name": "Daily-Mean Near-Surface Wind Speed",
@@ -35,6 +40,13 @@
           "wind"
         ],
         "type": "es"
+      },
+      {
+        "paramId": "10",
+        "shortName": "ws"
+      },
+      {
+        "long_name": "Wind speed"
       }
     ]
   }

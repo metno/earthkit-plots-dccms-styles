@@ -11,6 +11,7 @@
       "250rh"
     ],
     "styles": [
+      "dccms_sh_r_f0t100i5",
       "sh_grnblu_f65t100i15",
       "sh_grnblu_f65t100i15_light",
       "ct_grnblu_f65t100i15"
@@ -77,18 +78,25 @@
         "standard_name": "relative_humidity"
       },
       {
-      "paramId": "260242",
+        "paramId": "260242",
         "shortName": "2r",
         "centre": "219"
       },
       {
-      "paramId": "260242",
+        "paramId": "260242",
         "shortName": "2r",
         "centre": "edzw"
       },
       {
-      "paramId": "260242",
+        "paramId": "260242",
         "centre": "edzw"
+      },
+      {
+        "paramId": "157",
+        "shortName": "r"
+      },
+      {
+        "long_name": "Relative humidity"
       }
     ]
   }
