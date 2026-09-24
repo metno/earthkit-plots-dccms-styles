@@ -1,8 +1,13 @@
 [
   {
-    "eccharts_layer": ["tp_interval","cp_interval","lsp_interval"],
+    "eccharts_layer": [
+      "tp_interval",
+      "cp_interval",
+      "lsp_interval"
+    ],
     "prefered_units": "mm",
     "styles": [
+      "dccms_sh_tp_f0t200lst",
       "sh_blured_f05t300lst",
       "sh_blured_f1t100lst",
       "sh_blured_f1t100lst_dark",
@@ -14,20 +19,31 @@
     ],
     "match": [
       {
-        "paramId": ["228","143","142"],
-        "shortName": ["tp","cp","lsp"]
+        "paramId": [
+          "228",
+          "143",
+          "142"
+        ],
+        "shortName": [
+          "tp",
+          "cp",
+          "lsp"
+        ]
       },
       {
-        "long_name": ["Total precipitation",
-                      "Convective precipitation",
-                      "Large-scale precipitation"]
+        "long_name": [
+          "Total precipitation",
+          "Convective precipitation",
+          "Large-scale precipitation"
+        ]
       },
       {
-        "standard_name": ["lwe_thickness_of_precipitation_amount",
-                          "lwe_thickness_of_large_scale_precipitation_amount",
-                          "lwe_thickness_of_stratiform_precipitation_amount",
-                          "lwe_thickness_of_convective_precipitation_amount"
-                          ]
+        "standard_name": [
+          "lwe_thickness_of_precipitation_amount",
+          "lwe_thickness_of_large_scale_precipitation_amount",
+          "lwe_thickness_of_stratiform_precipitation_amount",
+          "lwe_thickness_of_convective_precipitation_amount"
+        ]
       },
       {
         "paramId": "228228",
@@ -37,6 +53,19 @@
       {
         "paramId": "228228",
         "centre": "edzw"
+      },
+      {
+        "standard_name": "total_precipitation"
+      },
+      {
+        "long_name": "Total precipitation"
+      },
+      {
+        "paramId": "228",
+        "shortName": "tp"
+      },
+      {
+        "paramId": "228"
       }
     ]
   }

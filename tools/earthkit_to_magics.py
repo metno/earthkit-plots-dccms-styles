@@ -64,18 +64,24 @@ STYLE_ORDER_OVERRIDES = {
     ],
 }
 
-# earthkit style id -> (magics file name, eccharts-style layer name,
-#                       units Magics should convert the field to)
+# earthkit style id -> (the stock parameter file this identity extends,
+#                       eccharts-style layer name, units Magics converts to)
+#
+# The DCCMS styles are folded into the stock library's own parameter files
+# rather than shipped beside them, so that exactly one record matches any given
+# field. The file named here is the fallback owner: criteria that name a
+# paramId go to whichever record already claims it (see extend_stock_files),
+# and everything else lands here.
 PARAMS = {
-    "near-surface-air-temperature": ("dccms_2t", "dccms_2t", "C"),
-    "dew-point-temperature": ("dccms_dpt", "dccms_dewpoint", "C"),
-    "sea-surface-temperature": ("dccms_sst", "dccms_sst", "C"),
-    "mean-sea-level-pressure": ("dccms_msl", "dccms_msl", "hPa"),
-    "total-precipitation": ("dccms_tp", "dccms_tp", "mm"),
-    "relative-humidity": ("dccms_r", "dccms_r", None),
-    "cloud-cover": ("dccms_cloud_cover", "dccms_cloud_cover", None),
-    "wind-speed-at-10m": ("dccms_ws", "dccms_wind_speed", None),
-    "vertical-velocity-at-100m": ("dccms_w", "dccms_vertical_velocity", None),
+    "near-surface-air-temperature": ("2t.json", "2t", "C"),
+    "dew-point-temperature": ("2t_dewpoint.json", "2t_dewpoint", "C"),
+    "sea-surface-temperature": ("sst.json", "sst", "C"),
+    "mean-sea-level-pressure": ("msl.json", "msl", "hPa"),
+    "total-precipitation": ("tp_interval.json", "tp_interval", "mm"),
+    "relative-humidity": ("rh1000.json", "rh1000", None),
+    "cloud-cover": ("lcc.json", "lcc", None),
+    "wind-speed-at-10m": ("wind_speed.json", "wind_speed", None),
+    "vertical-velocity-at-100m": ("700w.json", "700w", None),
 }
 
 # earthkit style name -> Magics style name
@@ -373,21 +379,199 @@ def build_styles():
     return definitions, per_identity, warnings
 
 
-def build_param_file(identity, style_names):
-    """Build the Magics parameter-matching entry for one earthkit identity."""
-    magics_file, layer, units = PARAMS[identity]
+def dccms_criteria(identity):
+    """The DCCMS match criteria for an identity, as Magics match entries."""
     criteria = load_yaml(SRC / "identities" / f"{identity}.yml")["criteria"]
+    return [{key: str(value) for key, value in entry.items()} for entry in criteria]
 
-    match = []
-    for entry in criteria:
-        match.append({key: str(value) for key, value in entry.items()})
 
-    record = {"eccharts_layer": layer}
-    if units is not None:
-        record["prefered_units"] = units
-    record["styles"] = style_names
-    record["match"] = match
-    return magics_file, [record]
+# paramId is the only identifier precise enough to decide that two entries are
+# about the same field. shortName alone is not: the stock library uses "t" and
+# "ws" for pressure-level fields the DCCMS styles have nothing to do with.
+IDENTITY_KEY = "paramId"
+
+# A record narrowed by any of these is about a more specific field than the
+# DCCMS styles cover -- a pressure level, or an ensemble product whose values
+# live on a different scale. It is not the owner of a plain paramId.
+NARROWING_KEYS = ("levelist", "level", "levtype", "type")
+
+
+def param_ids(match_entries):
+    """The paramIds these match entries claim."""
+    ids = set()
+    for entry in match_entries:
+        value = entry.get(IDENTITY_KEY)
+        if value is None:
+            continue
+        for item in value if isinstance(value, list) else [value]:
+            ids.add(str(item))
+    return ids
+
+
+def stock_styles(record):
+    """A record's own styles, with any DCCMS names removed.
+
+    Stripping the prefix is half of what makes this idempotent: it recovers the
+    upstream list no matter how many times the generator has run before.
+    """
+    return [s for s in record.get("styles", []) if not s.startswith(PREFIX)]
+
+
+def stock_param_files():
+    """Every parameter file in the library, parsed."""
+    for path in sorted(OUT.glob("*.json")):
+        if path.name == "styles.json" or path.name.startswith(PREFIX):
+            continue
+        try:
+            records = json.loads(path.read_text())
+        except json.JSONDecodeError:
+            continue
+        if isinstance(records, list):
+            yield path, records
+
+
+def dump_stock(path, records):
+    """Rewrite a parameter file, keeping its key order and 2-space indent."""
+    with open(path, "w") as f:
+        json.dump(records, f, indent=2)
+        f.write("\n")
+
+
+def find_owner(pairs, paramid):
+    """The record that already claims this paramId without narrowing it."""
+    for path, records in pairs:
+        for index, record in enumerate(records):
+            if not record.get("styles"):
+                continue
+            for entry in record.get("match", []):
+                if any(key in entry for key in NARROWING_KEYS):
+                    continue
+                if paramid in param_ids([entry]):
+                    return path, index
+    return None
+
+
+# Records every addition made to the vendored stock files, so the next run can
+# undo it exactly. Stripping by value is not safe: several DCCMS criteria are
+# identical to the upstream entry they sit beside (mcc.json genuinely says
+# {paramId: 187, shortName: mcc}), so a value-based strip deletes stock data.
+MANIFEST = SHARE / "dccms_manifest.json"
+
+
+def note(manifest, path, index, field, value):
+    """Record one addition to record `index` of `path`."""
+    slot = manifest.setdefault(path.name, {}).setdefault(str(index), {})
+    if field == "prefered_units":
+        slot[field] = value
+    else:
+        slot.setdefault(field, []).append(value)
+
+
+def undo_manifest(by_path):
+    """Remove everything the previous run added, using the manifest it wrote."""
+    if not MANIFEST.is_file():
+        return
+    try:
+        manifest = json.loads(MANIFEST.read_text())
+    except json.JSONDecodeError:
+        return
+    for name, per_index in manifest.items():
+        path = OUT / name
+        if path not in by_path:
+            continue
+        for index, added in per_index.items():
+            try:
+                record = by_path[path][int(index)]
+            except (ValueError, IndexError):
+                continue
+            for entry in added.get("match", []):
+                if entry in record.get("match", []):
+                    record["match"].remove(entry)
+            for style in added.get("styles", []):
+                if style in record.get("styles", []):
+                    record["styles"].remove(style)
+            if "prefered_units" in added:
+                record.pop("prefered_units", None)
+
+
+def extend_stock_files(per_identity):
+    """Fold the DCCMS criteria and styles into the stock parameter files.
+
+    Rather than shipping a parallel set of dccms_<param>.json files, each DCCMS
+    identity is merged into the stock record that already owns the field. That
+    leaves exactly one record matching any given field, so Magics -- which
+    returns the style list of the single best-scoring record and never unions
+    across files -- has no tie to break.
+
+    Each criterion goes to whichever record already claims its paramId without
+    narrowing it by level or product type. Criteria with no such owner, and
+    criteria naming no paramId at all, go to the identity's primary file. That
+    keeps a DCCMS identity spanning several upstream files (cloud cover) from
+    creating the very ties this is meant to avoid.
+
+    Idempotent by way of a manifest: every addition is recorded in
+    share/magics/dccms_manifest.json and undone on the next run. The manifest
+    is what makes this safe -- several DCCMS criteria are character-for-
+    character identical to the upstream entry they sit beside (mcc.json really
+    does say {paramId: 187, shortName: mcc}), so stripping by value would
+    delete the stock library's own criteria.
+    """
+    by_path = {path: records for path, records in stock_param_files()}
+    # Snapshot before mutating, so untouched files are not rewritten and the
+    # diff stays confined to the handful of files that actually gain something.
+    before = {path: json.dumps(records, sort_keys=True) for path, records in by_path.items()}
+    undo_manifest(by_path)
+
+    pairs = list(by_path.items())
+    touched, problems, manifest = {}, [], {}
+
+    for identity, style_names in per_identity.items():
+        primary_name, _, units = PARAMS[identity]
+        primary_path = OUT / primary_name
+        if primary_path not in by_path:
+            problems.append(f"{identity}: {primary_name} is not in the library")
+            continue
+
+        targets = set()
+        for entry in dccms_criteria(identity):
+            ids = param_ids([entry])
+            owner = find_owner(pairs, sorted(ids)[0]) if ids else None
+            path, index = owner or (primary_path, 0)
+            record = by_path[path][index]
+            if entry not in record.setdefault("match", []):
+                record["match"].append(entry)
+                note(manifest, path, index, "match", entry)
+            targets.add((path, index))
+
+        # DCCMS styles go first so they stay the default: Magics and skinnyWMS
+        # both take styles[0] when the caller asks for no particular style.
+        for path, index in targets:
+            record = by_path[path][index]
+            base = record.get("styles", [])
+            added = [s for s in style_names if s not in base]
+            record["styles"] = style_names + [s for s in base if s not in style_names]
+            for name in added:
+                note(manifest, path, index, "styles", name)
+            touched.setdefault(path.name, set()).add(identity)
+
+        record = by_path[primary_path][0]
+        if units is not None:
+            existing = record.get("prefered_units")
+            if existing is None:
+                record["prefered_units"] = units
+                note(manifest, primary_path, 0, "prefered_units", units)
+            elif existing != units:
+                problems.append(
+                    f"{identity}: {primary_name} already asks for {existing!r}, "
+                    f"DCCMS wants {units!r}"
+                )
+
+    for path, records in by_path.items():
+        if json.dumps(records, sort_keys=True) != before[path]:
+            dump_stock(path, records)
+    dump(MANIFEST, manifest)
+
+    return touched, problems
 
 
 def build_coastlines():
@@ -518,30 +702,24 @@ def main():
     definitions, per_identity, warnings = build_styles()
     n_stock, n_ours = merge_styles_json(OUT / "styles.json", definitions)
 
-    written = []
-    for identity, style_names in per_identity.items():
-        magics_file, record = build_param_file(identity, style_names)
-        dump(OUT / f"{magics_file}.json", record)
-        written.append(f"{magics_file}.json")
+    touched, problems = extend_stock_files(per_identity)
 
     dump(OUT / "coastlines.json", build_coastlines())
     dump(SHARE / "dccms_units-rules.json", EXTRA_UNITS_RULES)
 
-    # A parameter file left behind by an earlier run under a different name
-    # would keep matching fields, so say so rather than leaving it to rot.
-    stale = sorted(
-        f.name
-        for f in OUT.glob(f"{PREFIX}*.json")
-        if f.name not in written and f.name != "dccms_units-rules.json"
-    )
-
     print(f"{OUT}")
     print(f"  styles.json: {n_stock} stock + {n_ours} DCCMS definitions")
-    print(f"  {len(written)} parameter files, coastlines.json")
+    print(f"  {len(touched)} parameter files extended in place:")
+    for name in sorted(touched):
+        print(f"    {name:22} {', '.join(sorted(touched[name]))}")
+    print(f"  coastlines.json")
     print(f"{SHARE / 'dccms_units-rules.json'}")
     for warning in warnings:
         print(f"  note: {warning}")
-    for name in stale:
+    for name in problems:
+        print(f"  PROBLEM: {name}")
+    leftover = sorted(f.name for f in OUT.glob(f"{PREFIX}*.json"))
+    for name in leftover:
         print(f"  stale: {name} is not generated any more -- delete it")
 
 

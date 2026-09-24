@@ -3,6 +3,8 @@
     "eccharts_layer": "msl",
     "prefered_units": "hPa",
     "styles": [
+      "dccms_ct_msl_i4",
+      "dccms_ct_msl_i400_pa",
       "ct_blk_i5_t2",
       "ct_blk_i5_t1",
       "ct_blk_i5_t1_hilo",
@@ -29,7 +31,7 @@
       {
         "centre": "219",
         "shortName": "prmsl",
-        "paramId":"260074"
+        "paramId": "260074"
       },
       {
         "long_name": [
@@ -37,7 +39,10 @@
           "Sea Level Pressure",
           "Sea level pressure"
         ],
-        "standard_name": ["air_pressure_at_sea_level","air_pressure_at_mean_sea_level"]
+        "standard_name": [
+          "air_pressure_at_sea_level",
+          "air_pressure_at_mean_sea_level"
+        ]
       },
       {
         "long_name": [
@@ -47,15 +52,24 @@
         ]
       },
       {
-        "standard_name": ["air_pressure_at_sea_level","air_pressure_at_mean_sea_level"]
+        "standard_name": [
+          "air_pressure_at_sea_level",
+          "air_pressure_at_mean_sea_level"
+        ]
       },
       {
         "centre": "219",
-        "paramId":"260074"
+        "paramId": "260074"
       },
       {
         "centre": "edzw",
-        "paramId":"260074"
+        "paramId": "260074"
+      },
+      {
+        "standard_name": "air_pressure_at_sea_level"
+      },
+      {
+        "long_name": "Mean sea level pressure"
       }
     ]
   }

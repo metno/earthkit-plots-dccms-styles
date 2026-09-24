@@ -1,0 +1,191 @@
+{
+  "2t.json": {
+    "0": {
+      "match": [
+        {
+          "paramId": "130",
+          "shortName": "t"
+        },
+        {
+          "standard_name": "air_temperature"
+        },
+        {
+          "standard_name": "temp_scrn"
+        },
+        {
+          "long_name": "near-surface air temperature"
+        },
+        {
+          "long_name": "Mean 2 metre temperature"
+        },
+        {
+          "long_name": "screen level temperature"
+        },
+        {
+          "stash_code": "3236"
+        }
+      ],
+      "styles": [
+        "dccms_sh_2t_fM4t50i2"
+      ]
+    }
+  },
+  "2t_dewpoint.json": {
+    "0": {
+      "match": [
+        {
+          "paramId": "3017",
+          "shortName": "dpt"
+        },
+        {
+          "standard_name": "dew_point_temperature"
+        },
+        {
+          "long_name": "Dew point temperature"
+        }
+      ],
+      "styles": [
+        "dccms_sh_dpt_fM12t46i2"
+      ]
+    }
+  },
+  "700w.json": {
+    "0": {
+      "match": [
+        {
+          "standard_name": "vertical_velocity"
+        },
+        {
+          "long_name": "Vertical Velocity"
+        }
+      ],
+      "styles": [
+        "dccms_sh_w_fM20t15lst"
+      ]
+    }
+  },
+  "hcc.json": {
+    "0": {
+      "styles": [
+        "dccms_sh_cloud_f0t1i01"
+      ]
+    }
+  },
+  "lcc.json": {
+    "0": {
+      "match": [
+        {
+          "paramId": "260648",
+          "shortName": "fog"
+        },
+        {
+          "standard_name": "fog_cloud_cover"
+        },
+        {
+          "paramId": "185",
+          "shortName": "ccc"
+        }
+      ],
+      "styles": [
+        "dccms_sh_cloud_f0t1i01"
+      ]
+    }
+  },
+  "mcc.json": {
+    "0": {
+      "styles": [
+        "dccms_sh_cloud_f0t1i01"
+      ]
+    }
+  },
+  "msl.json": {
+    "0": {
+      "match": [
+        {
+          "standard_name": "air_pressure_at_sea_level"
+        },
+        {
+          "long_name": "Mean sea level pressure"
+        }
+      ],
+      "styles": [
+        "dccms_ct_msl_i4",
+        "dccms_ct_msl_i400_pa"
+      ]
+    }
+  },
+  "rh1000.json": {
+    "0": {
+      "match": [
+        {
+          "paramId": "157",
+          "shortName": "r"
+        },
+        {
+          "long_name": "Relative humidity"
+        }
+      ],
+      "styles": [
+        "dccms_sh_r_f0t100i5"
+      ]
+    }
+  },
+  "sst.json": {
+    "0": {
+      "match": [
+        {
+          "standard_name": "sea_surface_temperature"
+        },
+        {
+          "standard_name": "sea_surface_skin_temperature"
+        },
+        {
+          "long_name": "sea surface temperature"
+        }
+      ],
+      "styles": [
+        "dccms_sh_sst_fM1t30i1",
+        "dccms_sh_sst_f272t300i1"
+      ]
+    }
+  },
+  "tp_interval.json": {
+    "0": {
+      "match": [
+        {
+          "standard_name": "total_precipitation"
+        },
+        {
+          "long_name": "Total precipitation"
+        },
+        {
+          "paramId": "228",
+          "shortName": "tp"
+        },
+        {
+          "paramId": "228"
+        }
+      ],
+      "styles": [
+        "dccms_sh_tp_f0t200lst"
+      ]
+    }
+  },
+  "wind_speed.json": {
+    "0": {
+      "match": [
+        {
+          "paramId": "10",
+          "shortName": "ws"
+        },
+        {
+          "long_name": "Wind speed"
+        }
+      ],
+      "styles": [
+        "dccms_sh_ws_f0t31lst",
+        "dccms_sh_ws_f0t110lst"
+      ]
+    }
+  }
+}
